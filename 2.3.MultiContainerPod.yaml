@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: nginxpod
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginxcontainer
+    image: nginx
+    ports:
+    - containerPort: 80
+  - name: javawebappconatiner
+    image: prataptec22/java-web-app-docker:1
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginxsvc
+spec:
+  type: NodePort
+  selector:
+    app: nginx
+  ports:
+  - port: 80
+    targerPort: 80
+    name: nginxPort
+  - port: 8080
+    targetPort: 8080
+    name: webapp

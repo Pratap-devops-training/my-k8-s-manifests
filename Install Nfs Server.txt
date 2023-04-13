@@ -1,0 +1,63 @@
+Select ubuntu Server:
+----------------------
+**Prerequisites : NFS and K8's nodes should be in same VPC to communicate NFS Server
+
+1.Install NFS Server Software:
+
+	Command :
+	
+	sudo apt update -y
+	
+	*sudo apt install nfs-kernel-server -y
+
+2.Open NFS Port in Server Security Group Inbound Rules
+   
+   Port Number: 2049 
+
+3. Create an NFS Export Directory(Share directory)
+   
+   Command:
+   
+   sudo mkdir -p /mnt/nfs_share
+   
+4. Change Permission for shared directory
+	
+	sudo chown -R nobody:nogroup /mnt/nfs_share
+	
+	sudo chmod -R 777 /mnt/nfs_share
+	
+5. Grant NFS Share Access to Client Systems
+
+	sudo vi /etc/exports
+	
+	/mnt/nfs_share 172.31.0.0/16(rw,sync,no_subtree_check) 
+
+	The file content will be like :
+	
+		sharedpath CIDR_of_k8Cluster_VPC/16(rw,sync,no_subtree_check)
+	========================================================================================	
+		# /etc/exports: the access control list for filesystems which may be exported
+	#               to NFS clients.  See exports(5).
+	#
+	# Example for NFSv2 and NFSv3:
+	# /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+	#
+	# Example for NFSv4:
+	# /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+	# /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+	/mnt/nfs_share 172.31.0.0/16(rw,sync,no_subtree_check,no_root_squash)
+	===============================================================================
+
+6. Export the NFS Share Directory
+	
+	$ sudo exportfs -a							=>Export settings
+	$ sudo systemctl restart nfs-kernel-server	=>restart nfs Service
+	
+	$ sudo systemctl status nfs-kernel-server	=>check status active/not
+
+
+7.Install the NFS Client on the Client Systems(k8's all nodes including master)
+
+	 $sudo apt update -y
+	 
+	 $sudo apt install nfs-common -y 

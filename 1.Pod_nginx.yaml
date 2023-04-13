@@ -1,0 +1,15 @@
+POD Manifest/Yaml file
+----------------------
+
+apiVersion: v1
+kind: Pod
+metadata:
+ name: nginx-pod
+ labels:
+   app: nginx
+spec:
+ containers:
+ - name: nginxconatiner
+   image: nginx
+   ports:
+   - containerPort: 80

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginxsvc
+spec:
+  type: ClusterIP   #Default Service
+  selector:
+    app: nginx   #here app:ngnix is labels specified in pod(POD labels as selectors)
+  ports:
+  - port: 80    #Service Port
+    targetPort: 80 #ConatinerPort
